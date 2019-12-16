@@ -1,0 +1,17 @@
+﻿@model Tasks.Models.Team
+@{
+    ViewBag.Title = "New";
+}
+
+<form method="post" action="/Team/New/">
+    @Html.Label("Name", "Name")
+    <br />
+    @Html.TextBox("Name", null, new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger " })
+    <br />
+    <label>Select members:</label>
+    <br />
+    @Html.ListBoxFor(m => m.SelectedUserIds, Model.Users, new { @class = "form-control" })
+    <br />
+    <button type="submit" class="btn btn-outline-success">Add team</button>
+</form>

@@ -1,0 +1,24 @@
+﻿@model Tasks.Models.Project
+@{
+    ViewBag.Title = "Welcome to tasksss";
+}
+
+<h3 class="title">@ViewBag.Title</h3>
+<br />
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.message
+    </div>
+}
+
+@foreach (Tasks.Models.Project project in ViewBag.Projects)
+{
+    <h4><a href="/Project/Show/@project.ProjectId">@project.Title</a></h4>
+    @Html.Partial("ProjectPartial", project)
+    <hr />
+    <br />
+}
+<input type="button" class="btn btn-info" value="Add New Project" onclick="@("window.location.href='" + @Url.Action("/New","Project") + "'");" />
+
+

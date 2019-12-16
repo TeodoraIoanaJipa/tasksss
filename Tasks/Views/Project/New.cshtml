@@ -1,0 +1,25 @@
+﻿@model Tasks.Models.Project
+@{
+    ViewBag.Title = "New";
+}
+
+<h2>Create new project</h2>
+
+<form method="post" action="/Project/New/">
+    @Html.HiddenFor(m => m.OrganizerId)
+    @Html.Hidden("CreatedDate", DateTime.Now, new { @class = "form-control" })
+    @Html.Label("Title", "Title")
+    <br />
+    @Html.TextBox("Title", "", new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger " })
+    <br /><br />
+    @Html.Label("Description", "Description")
+    <br />
+    @Html.TextArea("Description", "", new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.Description, null, new { @class = "text-danger " })
+    <br /><br />
+    <label>Select members:</label>
+    <br />
+    @Html.ListBoxFor(m => m.SelectedUserIds, Model.Users, new { @class = "form-control" })
+    <button type="submit" class="btn btn-outline-success">Add Project</button>
+</form>

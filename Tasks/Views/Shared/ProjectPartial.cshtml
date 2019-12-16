@@ -1,0 +1,19 @@
+﻿@model Tasks.Models.Project
+<div class="show-inline">
+    <i class="fa fa-user" aria-hidden="true"></i>
+    <label>Created By</label>
+    @if (Model.Organizer.UserName == ViewBag.CurrentUser)
+    {
+        <strong>you </strong>
+    }
+    else
+    {
+        <strong> @Model.Organizer.UserName   </strong>
+    }
+</div>
+<div class="show-inline">
+    <i class="fa fa-calendar"></i>
+    <label>Created At</label>
+    <strong> @Model.CreatedDate.ToString()</strong>
+</div>
+<br />

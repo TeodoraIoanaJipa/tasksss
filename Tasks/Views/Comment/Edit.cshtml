@@ -1,0 +1,11 @@
+﻿@model Tasks.Models.Comment
+
+ 
+<form method="post" action="/Comment/Edit/@Model.CommentId">
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+    @Html.Label("Content", "Content")
+    <br />
+    @Html.EditorFor(m => m.Content)
+    @Html.ValidationMessageFor(m => m.Content, null, new { @class = "text-danger " })
+    <button type="submit" class="btn btn-outline-success">Edit</button>
+</form>

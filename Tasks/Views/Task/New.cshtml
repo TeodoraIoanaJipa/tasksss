@@ -1,0 +1,47 @@
+﻿@model Tasks.Models.Task
+@{
+    ViewBag.Title = "New";
+}
+
+<h2>New task</h2>
+<form method="post" action="/Task/New/">
+    <input type="hidden" name="ProjectId" value=@ViewBag.ProjectId class="form-control" />
+    <br />
+    <label>Task Name:</label>
+    <br />
+    @Html.TextBox("Title", "", new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger " })
+    <br />
+    <label>Description:</label>
+    <br />
+    @Html.TextBox("TaskDescription", "", new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.TaskDescription, null, new { @class = "text-danger " })
+    <br />
+    <label>Status:</label>
+    <select name="Status" class="form-control">
+        <option value="Not started"> Not started</option>
+        <option value="In progress"> In progress</option>
+        <option value="Completed"> Completed</option>
+    </select>
+    @Html.ValidationMessageFor(m => m.Status, null, new { @class = "text-danger " })
+    <br />
+    <label>Start date:</label>
+    <br />
+    <input type="date" name="StartDate" class="form-control" />
+    @Html.ValidationMessageFor(m => m.StartDate, null, new { @class = "text-danger " })
+    <br />
+    <label>End date:</label>
+    <br />
+    <input type="date" name="EndDate" class="form-control" />
+    @Html.ValidationMessageFor(m => m.EndDate, null, new { @class = "text-danger " })
+    <br />
+    <label>Assigned To:</label>
+    <br />
+    @Html.DropDownList("AssignedToId", new SelectList(Model.Users, "Value", "Text"), "Assigned To", new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.AssignedToId, null, new { @class = "text-danger " })
+    <br />
+    <button type="submit" class="btn btn-outline-success">Add Task</button>
+
+</form>
+
+

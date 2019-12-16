@@ -1,0 +1,19 @@
+﻿@model Tasks.Models.Project
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Project @ViewBag.Project.Title</h2>
+<form action="/Project/Edit/@Model.ProjectId" method="post">
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+    @Html.Label("Title", "Title")
+    <br />
+    @Html.EditorFor(m => m.Title)
+    @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger " })
+    <br />
+    <label>Description</label>
+    <br />
+    @Html.TextArea("Description", Model.Description, new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.Description, null, new { @class = "text-danger " })
+    <button type="submit" class="btn btn-outline-success">Edit</button>
+</form>

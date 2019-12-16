@@ -1,0 +1,11 @@
+﻿@model Tasks.Models.Team
+@{
+    ViewBag.Title = "Show";
+}
+
+<h2>@Model.Name</h2>
+
+@foreach (var member in Model.Members)
+{
+    <p>@member.UserName</p>
+}
