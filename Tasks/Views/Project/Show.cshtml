@@ -1,61 +1,71 @@
 ﻿@using Microsoft.AspNet.Identity
 @model Tasks.Models.Project
 
-
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.message
+    </div>
+}
 <h3>Project title: @Model.Title</h3>
 <p> Description: @Model.Description</p>
 @Html.Partial("ProjectPartial", Model)
-
-@if (ViewBag.TasksCount != 0)
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Title</th>
-                <th scope="col">Status</th>
-                <th scope="col">StartDate</th>
-                <th scope="col">EndDate</th>
-                <th scope="col">AssignedTo</th>
-                @if (ViewBag.showButtons == true)
-                {
-                    <th scope="col">Actions</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @{ var index = 0; }
-            @foreach (Tasks.Models.Task task in ViewBag.Taskuri)
-            {
+<p>
+    Members:
+    @foreach (Tasks.Models.ApplicationUser usr in ViewBag.Useri)
+    {
+        <small>@usr.UserName</small>
+    }</p>
+    @if (ViewBag.TasksCount != 0)
+    {
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <th scope="row">@Html.Raw(++index)</th>
-                    <td><a href="/Task/Show/@task.TaskId">@task.Title</a></td>
-                    <td>@Html.Raw(task.Status)</td>
-                    <td>@Html.Raw(task.StartDate)</td>
-                    <td>@Html.Raw(task.EndDate)</td>
-                    <td>@Html.Raw(task.AssignedTo.UserName)</td>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">StartDate</th>
+                    <th scope="col">EndDate</th>
+                    <th scope="col">AssignedTo</th>
                     @if (ViewBag.showButtons == true)
                     {
-                        <td>
-
-                            <a href="/Task/Edit/@task.TaskId"><i class="fa fa-edit"></i></a>
-                            <form class="inline-btn" method="post" action="/Task/Delete/@task.TaskId">
-                                @Html.HttpMethodOverride(HttpVerbs.Delete)
-                                <button style="border:none" type="submit"><i class="fa fa-trash"></i></button>
-                            </form>
-
-                        </td>
+                        <th scope="col">Actions</th>
                     }
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No Tasks yet</p>
-}
-@if ( ViewBag.showButtons == true)
+            </thead>
+            <tbody>
+                @{ var index = 0; }
+                @foreach (Tasks.Models.Task task in ViewBag.Taskuri)
+                {
+                    <tr>
+                        <th scope="row">@Html.Raw(++index)</th>
+                        <td><a href="/Task/Show/@task.TaskId">@task.Title</a></td>
+                        <td>@Html.Raw(task.Status)</td>
+                        <td>@Html.Raw(task.StartDate)</td>
+                        <td>@Html.Raw(task.EndDate)</td>
+                        <td>@Html.Raw(task.AssignedTo.UserName)</td>
+                        @if (ViewBag.showButtons == true)
+                        {
+                            <td>
+
+                                <a href="/Task/Edit/@task.TaskId"><i class="fa fa-edit"></i></a>
+                                <form class="inline-btn" method="post" action="/Task/Delete/@task.TaskId">
+                                    @Html.HttpMethodOverride(HttpVerbs.Delete)
+                                    <button style="border:none" type="submit"><i class="fa fa-trash"></i></button>
+                                </form>
+
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+<p>No Tasks yet</p>
+    }
+@if (ViewBag.showButtons == true)
 {
     <input type="button" class="btn btn-outline-info" value="Create new task" onclick="@("window.location.href='" + @Url.Action("/AddTask/"+@Model.ProjectId,"Task") + "'");" />
     <input type="button" class="btn btn-outline-warning" value="Edit project" onclick="@("window.location.href='" + @Url.Action("/Edit/" + @Model.ProjectId, "Project") + "'");" />

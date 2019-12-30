@@ -1,0 +1,11 @@
+﻿
+@model Tasks.Models.ApplicationUser
+<p>@Model.UserName has following roles:</p>
+@foreach (var user in ViewBag.rolesForUser)
+{
+    <small>@user</small>
+}
+<br />
+<div>
+    <a class="btn btn-sm btn-success" href="/User/Edit/@Model.Id"><i class="fa fa-edit"></i></a>
+</div>

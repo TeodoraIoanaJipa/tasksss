@@ -11,9 +11,7 @@
 }
 @foreach (var team in ViewBag.Teams)
 {
-    <h3><a href="/Team/Show/@team.TeamId">@team.Name</a></h3>
-    <input type="button" class="btn btn-outline-warning" value="Edit team" onclick="@("window.location.href='" + @Url.Action("/Edit/"+@team.TeamId,"Team") + "'");" />
-    <br />
+    <h3><a href="/Team/Show/@team.TeamId">@team.Name@team.TeamId</a></h3>
     <hr />
     <br />
 }

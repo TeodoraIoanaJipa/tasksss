@@ -27,17 +27,36 @@
                         Teams
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/Team/Index">All Teams</a>
-                        <a class="dropdown-item" href="/Team/New">Add Team</a>
-                        <div class="dropdown-divider"></div>
+
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <a class="dropdown-item" href="/Team/Index">All Teams</a>
+                            
+                        }
+                        else
+                        {
+                            <a class="dropdown-item" href="/Team/Index">My Teams</a>
+                        }
+
                     </div>
                 </li>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Users
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/User/Index">All Users</a>
+                        </div>
+                    </li>
+                }
             </ul>
 
-            <form class="form-inline my-2 my-lg-0">
+            @*<form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
+            </form>*@
             @Html.Partial("_LoginPartial")
 
         </div>

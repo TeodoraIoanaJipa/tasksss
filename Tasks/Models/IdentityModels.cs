@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -12,6 +13,7 @@ namespace Tasks.Models
     {
 
         public virtual ICollection<Team> Teams { get; set; }
+        public IEnumerable<SelectListItem> AllRoles { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

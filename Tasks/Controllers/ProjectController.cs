@@ -10,19 +10,34 @@ using Tasks.Models;
 
 namespace Tasks.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User,Administrator")]
     public class ProjectController : Controller
     {
         private ApplicationDbContext database = new ApplicationDbContext();
 
         [NonAction]
-        public IOrderedQueryable<Project> GetProjects()
+        public IQueryable<Project> GetProjects()
         {
-            var projects = from project in database.Projects.Include("Organizer")
-                           where project.OrganizerId == User.Identity.GetUserId()
-                           select project;
-            //Eager loading
-            return projects;
+            if (User.IsInRole("Administrator"))
+            {
+                var projects = from project in database.Projects.Include("Organizer").Include("Team")
+                               select project;
+                return projects;
+            }
+            else
+            {
+                var currentUser = User.Identity.GetUserId();
+                var user = from u in database.Users
+                           where u.Id == currentUser
+                           select u;
+
+                var projects = from project in database.Projects.Include("Organizer").Include("Team")
+                               where project.OrganizerId == currentUser
+                               || project.Team.Members.Contains(user.FirstOrDefault())
+                               select project;
+                return projects;
+            }
+                 
         }
 
         [LogFilter]
@@ -42,7 +57,7 @@ namespace Tasks.Controllers
 
         [LogFilter]
         [HttpGet]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Administrator")]
         public ActionResult Show(int id)
         {
             if (TempData.ContainsKey("message"))
@@ -55,7 +70,8 @@ namespace Tasks.Controllers
 
                 var tasks = from todo in project.Tasks
                             select todo;
-
+                var users = from usr in project.Team.Members
+                            select usr;
                 if (tasks.Count() != 0)
                 {
                     TempData["tasks"] = tasks;
@@ -63,9 +79,9 @@ namespace Tasks.Controllers
                 ViewBag.Taskuri = tasks;
                 ViewBag.TasksCount = tasks.Count();
                 ViewBag.CurrentUser = User.Identity.GetUserName();
-
+                ViewBag.Useri = users;
                 ViewBag.showButtons = false;
-                if ((User.IsInRole("Organizer") && project.OrganizerId == User.Identity.GetUserId())||
+                if (project.OrganizerId == User.Identity.GetUserId()||
                     User.IsInRole("Administrator"))
                 {
                     ViewBag.showButtons = true;
@@ -81,10 +97,11 @@ namespace Tasks.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User,Organizer,Member,Administrator")]
         public int NewTeam(Project project)
         {
             Team team = new Team();
-            team.Name = "name";
+            team.Name = project.Title;
             var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(database));
             //adaugi userii
             ICollection<ApplicationUser> appUsers = new List<ApplicationUser>();
@@ -111,7 +128,9 @@ namespace Tasks.Controllers
             return View(project);
         }
 
+
         [HttpPost]
+        [Authorize(Roles = "User,Organizer,Member,Administrator")]
         public ActionResult New(Project project)
         {
             var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(database));

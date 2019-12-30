@@ -2,10 +2,37 @@
 @{
     ViewBag.Title = "Show";
 }
-
+<button type="button" class="btn btn-outline-info" onclick="@("window.location.href='" + @Url.Action("Index","Team") + "'");"><i class="fa fa-arrow-left"></i></button>
+<br /><br />
 <h2>@Model.Name</h2>
-
-@foreach (var member in Model.Members)
+<br />
+@if (User.IsInRole("Administrator"))
 {
-    <p>@member.UserName</p>
+    <input type="button" class="btn btn-outline-warning" value="Edit" onclick="@("window.location.href='" + @Url.Action("/Edit/"+Model.TeamId,"Team") + "'");" />
+    <form class="inline-btn" method="post" action="/Team/Delete/@Model.TeamId">
+        @Html.HttpMethodOverride(HttpVerbs.Delete)
+        <button style="border:none; background-color:white" type="submit"><i class="fa fa-trash"></i></button>
+    </form>
 }
+<input type="button" class="btn btn-outline-warning" value="Add New Team" onclick="@("window.location.href='" + @Url.Action("/New","Team") + "'");" />
+<br />
+<br />
+<p>Members:</p>
+@{ var index = 0; }
+<div class="show-inline margin-class">
+    @foreach (var member in Model.Members)
+    {
+
+        <div>@Html.Raw(++index) @member.UserName</div>
+        <hr />
+
+    }
+</div>
+<p>Tasks:</p>
+<div class="show-inline margin-class">
+    @foreach (var task in ViewBag.Tasks)
+    {
+        <p><a href="/Task/Show/@task.TaskId">@task.Title</a></p>
+        <hr />
+    }
+</div>

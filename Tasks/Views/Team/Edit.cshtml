@@ -4,12 +4,14 @@
 }
 
 <h2>Edit</h2>
-<form action="/Team/Edit/@Model.Name" method="post">
+<form action="/Team/Edit/@Model.TeamId" method="post">
     @Html.HttpMethodOverride(HttpVerbs.Put)
-    @Html.Label("Name", "Name")     
-    <br />     
+    @Html.Label("Name", "Name")
+    <br />
     @Html.Editor("Name")
     <br />
+    <label>Select members:</label>
+    @Html.ListBoxFor(m => m.SelectedUserIds, Model.Users, new { @class = "form-control" })
     <button type="submit" class="btn btn-outline-success">Edit</button>
 </form>
 

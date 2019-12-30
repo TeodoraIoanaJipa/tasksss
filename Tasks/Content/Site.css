@@ -69,3 +69,7 @@ img {
 .inline-btn{
     display: inline-block;
 }
+
+.margin-class{
+    margin-left:25px;
+}

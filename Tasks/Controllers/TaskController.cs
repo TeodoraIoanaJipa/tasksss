@@ -10,6 +10,7 @@ using Tasks.Models;
 
 namespace Tasks.Controllers
 {
+    [Authorize(Roles = "User,Administrator")]
     public class TaskController : Controller
     {
         ApplicationDbContext database = new ApplicationDbContext();
@@ -18,6 +19,7 @@ namespace Tasks.Controllers
         private IEnumerable<SelectListItem> GetAllUserFromTeam(int teamid)
         {
             var selectList = new List<SelectListItem>();
+
             var allTeams = from teams in database.Teams
                            where teams.TeamId == teamid
                            select teams;
@@ -39,6 +41,13 @@ namespace Tasks.Controllers
             return selectList;
         }
 
+        public ActionResult Display(int id)
+        {
+            ViewBag.displayEdit = true;
+            
+            return Redirect("/Task/Show/" + id);
+
+        }
         [HttpGet]
         [Authorize(Roles = "User,Organizer,Member,Administrator")]
         public ActionResult Index()
@@ -115,6 +124,8 @@ namespace Tasks.Controllers
             var task = database.Tasks.Find(id);
             ViewBag.comments = task.Comments;
 
+            ViewBag.displayEdit = false;
+
             Project proj = database.Projects.Find(task.ProjectId);
             ViewBag.showButtons = false;
 
@@ -140,7 +151,28 @@ namespace Tasks.Controllers
             
             return View(task);
         }
+        [HttpGet]
+        [Authorize(Roles = "User,Organizer,Member,Administrator")]
+        public ActionResult Edit(int id)
+        {
+            Task task = database.Tasks.Find(id);
+                   
+            var projectId = task.ProjectId;
+            Project project = database.Projects.Find(projectId);
 
+            task.Users = GetAllUserFromTeam(project.TeamId);
+
+            if (project.OrganizerId == User.Identity.GetUserId() || User.IsInRole("Administrator"))
+            {
+                return View(task);
+            }
+            else
+            {
+                TempData["message"] = "You can't edit a task that was not created by you!";
+                return RedirectToAction("Index");
+            }
+
+        }
         [HttpPut]
         public ActionResult Edit(int id, Task requestTsk)
         {
@@ -149,15 +181,19 @@ namespace Tasks.Controllers
                 if (ModelState.IsValid)
                 {
                     Task task = database.Tasks.Find(id);
-                    var projectId = task.ProjectId;
-                    task.Title = requestTsk.Title;
-                    task.TaskDescription = requestTsk.TaskDescription;
-                    task.Status = requestTsk.Status;
-                    task.StartDate = requestTsk.StartDate;
-                    task.EndDate = requestTsk.EndDate;
-                    task.AssignedToId = requestTsk.AssignedToId;
-                    database.SaveChanges();
-                    TempData["message"] = "Articolul a fost modificat!";
+                    int projectId = task.ProjectId;
+                    if (TryUpdateModel(task))
+                    {
+                        task.Title = requestTsk.Title;
+                        task.TaskDescription = requestTsk.TaskDescription;
+                        task.Status = requestTsk.Status;
+                        task.StartDate = requestTsk.StartDate;
+                        task.EndDate = requestTsk.EndDate;
+                        task.Users = GetAllUserFromTeam(projectId);
+                        task.AssignedToId = requestTsk.AssignedToId;
+                        database.SaveChanges();
+                    }
+                    TempData["message"] = "Task was succesfully modified!";
                     return Redirect("/Project/Show/" + projectId);
                 }
                 else
@@ -165,7 +201,10 @@ namespace Tasks.Controllers
                     return View(requestTsk);
                 }
             }
-            catch (Exception e) { return View(); }
+            catch (Exception e) {
+                ViewBag.ErrorMessage = e.Message + e.StackTrace;
+                return View("Error");
+            }
         }
 
         [HttpDelete]

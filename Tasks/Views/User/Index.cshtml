@@ -1,0 +1,25 @@
+﻿@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.message
+    </div>
+
+}
+
+@foreach (var user in ViewBag.Users)
+{<div class="panel-heading">
+        <a href="/User/Show/@user.Id">UserName: @user.UserName</a>
+    </div>
+    <div class="panel-body">
+
+        <i class="glyphicon glyphicon-envelope"></i> Email utilizator: <span class="label label-default">@user.Email</span>
+
+        <br /><br /> @if (@user.PhoneNumber != null)
+        {<i class="glyphicon glyphicon-phone">
+            </i>@:Telefon utilizator:<span class="label label-default">@user.PhoneNumber</span>
+        }
+
+    </div>
+    <hr>
+    <br />
+} 

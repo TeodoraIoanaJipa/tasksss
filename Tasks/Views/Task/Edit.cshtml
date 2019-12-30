@@ -1,0 +1,30 @@
+﻿@model Tasks.Models.Task
+
+
+<form method="post" action="/Task/Edit/@Model.TaskId">
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+    @Html.HiddenFor(m => m.TaskId)
+    @Html.Label("Title", "Title")
+    @Html.TextBoxFor(m => m.Title, Model.Title, new { @class = "form-control" })
+    <br />
+    @Html.Label("TaskDescription", "Description")
+    @Html.TextBoxFor(m => m.TaskDescription, Model.TaskDescription, new { @class = "form-control" })
+    <br />
+    @Html.Label("StartDate", "Start date")
+    @Html.TextBoxFor(model => model.StartDate, new
+    { @class = "form-control", type = "date", @Value = Model.StartDate.Year + "-" + Model.StartDate.Month + "-" + Model.StartDate.Day })
+    @Html.ValidationMessageFor(m => m.StartDate, null, new { @class = "text-danger " })
+    <br />
+    @Html.Label("EndDate", "End date")
+    @Html.TextBoxFor(model => model.EndDate, new
+    { @class = "form-control", type = "date", @Value = Model.EndDate.Year + "-" + Model.EndDate.Month + "-" + Model.EndDate.Day })
+    @Html.ValidationMessageFor(m => m.EndDate, null, new { @class = "text-danger " })
+    <br />
+    @*@Html.JQueryUI().DatepickerFor(model => model.EndDate, new { @class = "form-control",type = "date" })*@
+    @Html.Label("Status", "Status")
+    @Html.DropDownListFor(model => model.Status, new SelectList(new string[] { "Not started", "In progress", "Completed" }, Model.Status), htmlAttributes: new { @class = "form-control" })
+    <br />
+    @Html.Label("AssignedToId", "Assigned To")
+    @Html.DropDownListFor(m => m.AssignedToId, new SelectList(Model.Users, "Value", "Text"), "Assigned To", new { @class = "form-control" })     <br />
+    <button type="submit" class="btn btn-outline-success inline-btn">Update</button>
+</form>

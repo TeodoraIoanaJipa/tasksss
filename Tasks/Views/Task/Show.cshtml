@@ -10,21 +10,63 @@
 }
 <h4>@Model.Title</h4>
 <p> Description: @Model.TaskDescription</p>
-<p> Status: @Model.Status</p>
-<p><i class="fa fa-clock-o" aria-hidden="true"></i>@Model.StartDate.ToShortDateString() - @Model.EndDate.ToShortDateString()</p>
-<p> Assigned To: @Model.AssignedTo.UserName</p>
+
+<form method="post" action="/Task/Edit/@Model.TaskId">
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+    @Html.HiddenFor(m => m.Title)
+    @Html.HiddenFor(m => m.TaskDescription)
+    @Html.HiddenFor(m => m.StartDate)
+    @Html.HiddenFor(m => m.EndDate)
+    @Html.HiddenFor(m => m.AssignedToId)
+    @Html.Label("Status", "Status", htmlAttributes: new { @class = "inline-btn" })
+    @Html.DropDownListFor(model => model.Status, new SelectList(new string[] { "Not started", "In progress", "Completed" }, Model.Status), htmlAttributes: new { @class = "form-control inline-btn" })
+    <button class="inline-btn" type="submit" class="btn btn-outline-success">Update Status</button>
+</form>
+
+<div class="show-inline">
+    <i class="fa fa-user" aria-hidden="true"></i>
+    <label>Assigned To:</label>
+    @if (Model.AssignedTo.UserName == ViewBag.CurrentUser)
+    {
+        <strong>you </strong>
+    }
+    else
+    {
+        <strong> @Model.AssignedTo.UserName   </strong>
+    }
+</div>
+<div class="show-inline" style="display:block">
+    <i class="fa fa-clock-o" aria-hidden="true"></i>
+    <label>Start date - End date</label>
+    <strong> @Model.StartDate.ToShortDateString() - @Model.EndDate.ToShortDateString()</strong>
+</div>
+<br />
+<br />
+@if (ViewBag.showButtons == true)
+{
+    <form method="post" action="/Comment/New">
+        @Html.Hidden("CreatedDate", DateTime.Now, new { @class = "form-control" })
+        <input type="hidden" name="TaskId" value="@Model.TaskId" />
+        @Html.TextBox("Content", null, new { placeholder = "Write a comment...", @class = "form-control inline-btn" })
+        <button type="submit" style="border:none; background-color:white"><i class="fa fa-comment"></i></button>
+    </form>
+}
+<br />
 <ul class="list-group">
     @foreach (Tasks.Models.Comment comm in ViewBag.Comments)
     {
         <li class="list-group-item">
             <strong>@comm.Content</strong>
+
             @if (User.IsInRole("Administrator") || comm.LeftById == User.Identity.GetUserId())
             {
-                <a href="/Comment/Edit/@comm.CommentId"><i class="fa fa-edit"></i></a>
-                <form style="display:inline-block;" method="post" action="/Comment/Delete/@comm.CommentId">
-                    @Html.HttpMethodOverride(HttpVerbs.Delete)
-                    <button style="border:none;background-color:white" type="submit"><i class="fa fa-trash"></i></button>
-                </form>
+                <div style="margin-left: 20px; display:inline-block">
+                    <a href="/Comment/Edit/@comm.CommentId"><i class="fa fa-edit"></i></a>
+                    <form style="display:inline-block;" method="post" action="/Comment/Delete/@comm.CommentId">
+                        @Html.HttpMethodOverride(HttpVerbs.Delete)
+                        <button style="border:none;background-color:white" type="submit"><i class="fa fa-trash"></i></button>
+                    </form>
+                </div>
             }
             <br />
             <i class="fa fa-user" aria-hidden="true"></i>
@@ -35,12 +77,3 @@
         </li>
     }
 </ul>
-@if (ViewBag.showButtons == true)
-{
-    <form method="post" action="/Comment/New">
-        @Html.Hidden("CreatedDate", DateTime.Now, new { @class = "form-control" })
-        <input type="hidden" name="TaskId" value="@Model.TaskId" />
-        @Html.TextBox("Content", null, new { placeholder = "Write a comment...", @class = "form-control inline-btn" })
-        <button type="submit" class="btn btn-outline-success inline-btn"><i class="fa fa-comment"></i></button>
-    </form>
-}
